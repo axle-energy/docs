@@ -25,12 +25,12 @@
     {
       "name": "Markets",
       "icon": "globe",
-      "url": "http://localhost:3000/markets/markets"
+      "url": "markets"
     },
     {
       "name": "API Reference",
       "icon": "rectangle-terminal",
-      "url": "api-reference/authentication"
+      "url": "api-reference"
     }
   ],
   "navigation": [
@@ -45,11 +45,11 @@
       "group": "Getting Started",
       "pages": [
         "tutorial/setup",
-        "tutorial/create-pool",
         "tutorial/create-asset",
         "tutorial/check-qual",
         "tutorial/register",
-        "tutorial/review"
+        "tutorial/review",
+        "tutorial/bid"
       ]
     },
     {
@@ -58,13 +58,6 @@
         "api-reference/authentication",
         {
           "group": "Assets",
-          "pages": [
-            "api-reference/entities/asset/get",
-            "api-reference/entities/asset/post"
-          ]
-        },
-        {
-          "group": "Pools",
           "pages": [
             "api-reference/entities/asset/get",
             "api-reference/entities/asset/post"
@@ -100,6 +93,12 @@
         "api-reference/endpoint/create",
         "api-reference/endpoint/update",
         "api-reference/endpoint/delete"
+      ]
+    },
+    {
+      "group": "Markets",
+      "pages": [
+        "markets/markets"
       ]
     }
   ],
