@@ -1,1 +1,2076 @@
-{"openapi": "3.0.2", "info": {"title": "axle optimizer", "description": "<h3>Module for optimization of assets, households, and pools across markets.</h3> <h2> Authentication </h2><p>Authentication is via Oauth2, please contact [support@axle.energy](mailto:support@axle.energy) for credentials. credentials. </p><h2> Core concepts </h2><ul style='font-size: 10px'><li>The core unit of functionality is a **Pool** to be be optimized.</li> <li>Each Pool is associated with a single **PriceZone**, and can be optimized as a block.</li><li>Each pool contains a number of **assets**, associated with a set of **households**. Each **household** is associated with a specific **GridConnection**. </li></ul><h2> Typical usage </h2><ul><li> Register a new pool and associated households and assets via the *entities* endpoints<li> Retrieve optimized profiles for the pool and associated assets via the *optimize* endpoints<li> New requests to the *optimize* endpoints prompt a re-optimization, allowing plans to be refreshedon multiple timescales and participation in baseload, day ahead, and intraday markets<li> Accept/reject a plan for a Pool to trigger physical execution of the plan and update operational schedulesfor the Assets in that Pool</ul><h2>Markets</h2><p> The optimizer is integrated with a wide range of markets across Europe. See the **MarketTypes** schema for more details. We cover:<ul><li> Wholesale markets (e.g. day ahead, intraday)<li> Transmission and Distribution markets (e.g. TNUOS, DUOS)<li> Balancing Services (e.g. FCR-D, aFRR)<li> Demand Response schemes (e.g. DFS, NEBEF)<li> Local network flexibility (e.g. Pilot, Scale)</ul><h3> Webhooks </h3><p> We can configure webhooks which we call when a new Plan becomes available for a Pool. Please get in touch at [support@axle.energy](mailto:support@axle.energy) to configure your webhooks.</p>", "version": "1.4.6"}, "paths": {"/entities/asset": {"post": {"tags": ["entities"], "summary": "Add Asset", "description": "Register a new asset with flexible load", "operationId": "add_asset_entities_asset_post", "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Asset"}}}, "required": true}, "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}, "patch": {"tags": ["entities"], "summary": "Update Asset", "description": "Update an existing asset", "operationId": "update_asset_entities_asset_patch", "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Asset"}}}, "required": true}, "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Asset"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/entities/asset/{asset_id}": {"get": {"tags": ["entities"], "summary": "Get Asset", "description": "Retrieve an existing asset", "operationId": "get_asset_entities_asset__asset_id__get", "parameters": [{"required": true, "schema": {"title": "Asset Id", "type": "integer"}, "name": "asset_id", "in": "path"}], "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Asset"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/entities/household": {"post": {"tags": ["entities"], "summary": "Add Household", "description": "Register a new household with flexible load", "operationId": "add_household_entities_household_post", "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}}, "security": [{"OAuth2PasswordBearer": []}]}, "patch": {"tags": ["entities"], "summary": "Update Household", "description": "Update an existing asset", "operationId": "update_household_entities_household_patch", "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Household"}}}, "required": true}, "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Household"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/entities/household/{household_id}": {"get": {"tags": ["entities"], "summary": "Get Household", "description": "Get details for a particular household", "operationId": "get_household_entities_household__household_id__get", "parameters": [{"required": true, "schema": {"title": "Household Id", "type": "integer"}, "name": "household_id", "in": "path"}], "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Household"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/entities/pool": {"post": {"tags": ["entities"], "summary": "Add Pool", "description": "Register a new pool to which households and assets can be associated", "operationId": "add_pool_entities_pool_post", "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/PoolRequest"}}}, "required": true}, "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Pool"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/entities/pool/{pool_id}": {"get": {"tags": ["entities"], "summary": "Get Pool", "description": "Retrieve specified pool and associated household IDs", "operationId": "get_pool_entities_pool__pool_id__get", "parameters": [{"required": true, "schema": {"title": "Pool Id", "type": "integer"}, "name": "pool_id", "in": "path"}], "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Pool"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/entities/pool/{pool_id}/add/{household_id}": {"post": {"tags": ["entities"], "summary": "Add Household To Pool", "description": "Register a new pool to which households and assets can be associated", "operationId": "add_household_to_pool_entities_pool__pool_id__add__household_id__post", "parameters": [{"required": true, "schema": {"title": "Pool Id", "type": "integer"}, "name": "pool_id", "in": "path"}, {"required": true, "schema": {"title": "Household Id", "type": "integer"}, "name": "household_id", "in": "path"}], "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/optimize/pool/{pool_id}": {"get": {"tags": ["optimize"], "summary": "Get Latest Optimized Plan For Pool", "operationId": "get_latest_optimized_plan_for_pool_optimize_pool__pool_id__get", "parameters": [{"required": true, "schema": {"title": "Start Time", "type": "string", "format": "date-time"}, "name": "start_time", "in": "query"}, {"required": true, "schema": {"title": "End Time", "type": "string", "format": "date-time"}, "name": "end_time", "in": "query"}], "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OptimizationPlan"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/optimize/household/{household_id}": {"get": {"tags": ["optimize"], "summary": "Get Latest Optimized Plan For Household", "description": "Retrieve the optimization plan of which a household is a part", "operationId": "get_latest_optimized_plan_for_household_optimize_household__household_id__get", "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OptimizationPlan"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/optimize/asset/{asset}": {"get": {"tags": ["optimize"], "summary": "Get Latest Optimized Plan For Asset", "description": "Retrieve the optimization plan of which an asset is a part", "operationId": "get_latest_optimized_plan_for_asset_optimize_asset__asset__get", "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/optimize/pool/accept/{pool_id}": {"post": {"tags": ["optimize"], "summary": "Accept Plan For Pool", "description": "Accept a proposed plan", "operationId": "accept_plan_for_pool_optimize_pool_accept__pool_id__post", "parameters": [{"required": true, "schema": {"title": "Pool Id"}, "name": "pool_id", "in": "path"}], "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}, "/optimize/pool/reject/{pool_id}": {"post": {"tags": ["optimize"], "summary": "Reject Plan For Pool", "description": "Reject a proposed plan", "operationId": "reject_plan_for_pool_optimize_pool_reject__pool_id__post", "parameters": [{"required": true, "schema": {"title": "Pool Id"}, "name": "pool_id", "in": "path"}], "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"OAuth2PasswordBearer": []}]}}}, "components": {"schemas": {"Asset": {"title": "Asset", "required": ["type", "household_id", "max_import_kw", "max_export_kw", "connection", "id"], "type": "object", "properties": {"type": {"$ref": "#/components/schemas/AssetType"}, "household_id": {"title": "Household Id", "type": "integer"}, "max_import_kw": {"title": "Max Import Kw", "type": "number"}, "max_export_kw": {"title": "Max Export Kw", "type": "number"}, "connection": {"$ref": "#/components/schemas/AssetConnection"}, "id": {"title": "Id", "type": "integer"}}}, "AssetConnection": {"title": "AssetConnection", "required": ["last_updated", "updated_by", "created_at", "authentication_url", "token_expiry", "username", "password"], "type": "object", "properties": {"last_updated": {"title": "Last Updated", "type": "string", "format": "date-time"}, "updated_by": {"title": "Updated By", "type": "integer"}, "created_at": {"title": "Created At", "type": "string", "format": "date-time"}, "authentication_url": {"title": "Authentication Url", "type": "string"}, "token_expiry": {"title": "Token Expiry", "type": "number"}, "username": {"title": "Username", "type": "string"}, "password": {"title": "Password", "type": "string"}}}, "AssetType": {"title": "AssetType", "enum": ["Vehicle", "Charger", "HVAC", "Solar Inverter", "Storage"], "type": "string", "description": "An enumeration."}, "BalancingPlans": {"title": "BalancingPlans", "required": ["last_updated", "updated_by", "created_at", "bid_offer_plans", "market_id"], "type": "object", "properties": {"last_updated": {"title": "Last Updated", "type": "string", "format": "date-time"}, "updated_by": {"title": "Updated By", "type": "integer"}, "created_at": {"title": "Created At", "type": "string", "format": "date-time"}, "bid_offer_plans": {"title": "Bid Offer Plans", "type": "array", "items": {"$ref": "#/components/schemas/BidOffer"}}, "market_id": {"title": "Market Id", "type": "integer"}}, "description": "Description of bids and offers to be communicated to the\nbalancing markets", "example": {"market_id": 22, "bid_offer_plans": [{"last_updated": "2023-03-10T10:23:59.702517", "updated_by": 3, "created_at": "2023-03-10T10:23:59.702520", "from_level_mw": 3.0, "to_level_mw": 3.2, "price_eur": 211.2, "from_time": "2023-02-19T10:00:00", "to_time": "2023-02-19T10:15:00", "submitted": false}, {"last_updated": "2023-03-10T10:23:59.702555", "updated_by": 3, "created_at": "2023-03-10T10:23:59.702555", "from_level_mw": 4.0, "to_level_mw": 0.0, "price_eur": 211.2, "from_time": "2023-02-19T10:15:00", "to_time": "2023-02-19T11:15:00", "submitted": false}, {"last_updated": "2023-03-10T10:23:59.702573", "updated_by": 3, "created_at": "2023-03-10T10:23:59.702574", "from_level_mw": 3.0, "to_level_mw": 3.2, "price_eur": 999.0, "from_time": "2023-02-19T14:00:00", "to_time": "2023-02-19T18:15:00", "submitted": false}]}}, "BidOffer": {"title": "BidOffer", "required": ["last_updated", "updated_by", "created_at", "from_level_mw", "to_level_mw", "price_eur", "from_time", "to_time"], "type": "object", "properties": {"last_updated": {"title": "Last Updated", "type": "string", "format": "date-time"}, "updated_by": {"title": "Updated By", "type": "integer"}, "created_at": {"title": "Created At", "type": "string", "format": "date-time"}, "from_level_mw": {"title": "From Level Mw", "type": "number"}, "to_level_mw": {"title": "To Level Mw", "type": "number"}, "price_eur": {"title": "Price Eur", "type": "number"}, "from_time": {"title": "From Time", "type": "string", "format": "date-time"}, "to_time": {"title": "To Time", "type": "string", "format": "date-time"}, "submitted": {"title": "Submitted", "type": "boolean", "default": false}}, "example": {"from_level_mw": 12.1, "to_level_mw": 11.6, "price_eur": 192.4, "from_time": "2023-02-19T10:00:00", "to_time": "2023-02-19T10:15:00"}}, "BiddingZone": {"title": "BiddingZone", "required": ["name", "geography"], "type": "object", "properties": {"name": {"title": "Name", "type": "string"}, "geography": {"$ref": "#/components/schemas/Geography"}}, "example": {"id": 121, "name": "GB Day Ahead", "type": "{'name': 'Day Ahead', 'category': <MarketCategory.wholesale: 'Wholesale'>}", "zone": {"name": "UK", "geography": "UK"}, "min_mw": 0, "allow_pool": true, "frequency": "30m"}}, "BiddingZones": {"title": "BiddingZones", "enum": [[{"name": "SE1", "geography": "SE"}], [{"name": "SE2", "geography": "SE"}], [{"name": "SE3", "geography": "SE"}], [{"name": "SE4", "geography": "SE"}], [{"name": "AT", "geography": "AT"}], [{"name": "BE", "geography": "BE"}], [{"name": "BG", "geography": "BG"}], [{"name": "HR", "geography": "HR"}], [{"name": "CZ", "geography": "CZ"}], [{"name": "DE_LU", "geography": "DE"}], [{"name": "DK_1", "geography": "DK"}], [{"name": "DK_2", "geography": "DK"}], [{"name": "EE", "geography": "EE"}], [{"name": "FI", "geography": "FI"}], [{"name": "FR", "geography": "FR"}], [{"name": "GR", "geography": "GR"}], [{"name": "HU", "geography": "HU"}], [{"name": "IE_SEM", "geography": "IE"}], [{"name": "IT_SACO_AC", "geography": "IT"}], [{"name": "IT_CALA", "geography": "IT"}], [{"name": "IT_SACO_DC", "geography": "IT"}], [{"name": "IT_CNOR", "geography": "IT"}], [{"name": "IT_CSUD", "geography": "IT"}], [{"name": "IT_NORD", "geography": "IT"}], [{"name": "IT_SARD", "geography": "IT"}], [{"name": "IT_SICI", "geography": "IT"}], [{"name": "IT_SUD", "geography": "IT"}], [{"name": "LV", "geography": "LV"}], [{"name": "NL", "geography": "NL"}], [{"name": "NO_1", "geography": "NO"}], [{"name": "NO_2", "geography": "NO"}], [{"name": "NO_2_NSL", "geography": "NO"}], [{"name": "NO_3", "geography": "NO"}], [{"name": "NO_4", "geography": "NO"}], [{"name": "NO_5", "geography": "NO"}], [{"name": "PL", "geography": "PL"}], [{"name": "PT", "geography": "PT"}], [{"name": "UK", "geography": "UK"}]], "type": "array", "items": {}, "description": "An enumeration."}, "Command": {"title": "Command", "required": ["on", "level", "state"], "type": "object", "properties": {"on": {"title": "On", "type": "boolean"}, "level": {"title": "Level", "type": "number"}, "state": {"$ref": "#/components/schemas/CommandState"}}, "example": {"asset_id": 901291, "timepoints": ["2023-02-11T04:00:00", "2023-02-11T04:30:00", "2023-02-11T05:00:00", "2023-02-11T05:30:00", "2023-02-11T06:00:00", "2023-02-11T06:30:00", "2023-02-11T07:00:00", "2023-02-11T07:30:00", "2023-02-11T08:00:00", "2023-02-11T08:30:00", "2023-02-11T09:00:00", "2023-02-11T09:30:00", "2023-02-11T10:00:00", "2023-02-11T10:30:00", "2023-02-11T11:00:00", "2023-02-11T11:30:00", "2023-02-11T12:00:00", "2023-02-11T12:30:00", "2023-02-11T13:00:00", "2023-02-11T13:30:00", "2023-02-11T14:00:00", "2023-02-11T14:30:00", "2023-02-11T15:00:00", "2023-02-11T15:30:00"], "commands": [{"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}]}}, "CommandState": {"title": "CommandState", "enum": ["SENT", "PENDING", "CONFIRMED"], "type": "string", "description": "An enumeration."}, "ExecutionPlan": {"title": "ExecutionPlan", "required": ["last_updated", "updated_by", "created_at", "asset_id", "timepoints", "commands"], "type": "object", "properties": {"last_updated": {"title": "Last Updated", "type": "string", "format": "date-time"}, "updated_by": {"title": "Updated By", "type": "integer"}, "created_at": {"title": "Created At", "type": "string", "format": "date-time"}, "asset_id": {"title": "Asset Id", "type": "integer"}, "timepoints": {"title": "Timepoints", "type": "array", "items": {"type": "string", "format": "date-time"}}, "commands": {"title": "Commands", "type": "array", "items": {"$ref": "#/components/schemas/Command"}}}, "example": {"asset_id": 901291, "timepoints": ["2023-02-11T04:00:00", "2023-02-11T04:30:00", "2023-02-11T05:00:00", "2023-02-11T05:30:00", "2023-02-11T06:00:00", "2023-02-11T06:30:00", "2023-02-11T07:00:00", "2023-02-11T07:30:00", "2023-02-11T08:00:00", "2023-02-11T08:30:00", "2023-02-11T09:00:00", "2023-02-11T09:30:00", "2023-02-11T10:00:00", "2023-02-11T10:30:00", "2023-02-11T11:00:00", "2023-02-11T11:30:00", "2023-02-11T12:00:00", "2023-02-11T12:30:00", "2023-02-11T13:00:00", "2023-02-11T13:30:00", "2023-02-11T14:00:00", "2023-02-11T14:30:00", "2023-02-11T15:00:00", "2023-02-11T15:30:00"], "commands": [{"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 11.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": true, "level": 9.2, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}, {"on": false, "level": 0, "state": "SENT"}]}}, "Frequency": {"title": "Frequency", "enum": ["Annual", "Daily", "30m", "1m"], "type": "string", "description": "An enumeration."}, "Geography": {"title": "Geography", "enum": ["DE", "UK", "NL", "FR", "SE", "DK", "IE", "NO", "IT", "FI", "BE", "AT", "BG", "HU", "HR", "CZ", "EE", "GR", "LV", "PT", "PL"], "type": "string", "description": "An enumeration."}, "GridConnection": {"title": "GridConnection", "required": ["max_import_kw", "max_export_kw"], "type": "object", "properties": {"max_import_kw": {"title": "Max Import Kw", "type": "number"}, "max_export_kw": {"title": "Max Export Kw", "type": "number"}}}, "GridSupplyPoint": {"title": "GridSupplyPoint", "required": ["name", "geography"], "type": "object", "properties": {"name": {"title": "Name", "type": "string"}, "geography": {"$ref": "#/components/schemas/Geography"}}}, "HTTPValidationError": {"title": "HTTPValidationError", "type": "object", "properties": {"detail": {"title": "Detail", "type": "array", "items": {"$ref": "#/components/schemas/ValidationError"}}}}, "Household": {"title": "Household", "required": ["last_updated", "updated_by", "created_at", "id", "account", "price_zone", "grid_supply_point", "supplier", "grid_connection", "tariff"], "type": "object", "properties": {"last_updated": {"title": "Last Updated", "type": "string", "format": "date-time"}, "updated_by": {"title": "Updated By", "type": "integer"}, "created_at": {"title": "Created At", "type": "string", "format": "date-time"}, "id": {"title": "Id", "type": "integer"}, "account": {"title": "Account", "type": "string"}, "price_zone": {"$ref": "#/components/schemas/BiddingZones"}, "grid_supply_point": {"$ref": "#/components/schemas/GridSupplyPoint"}, "supplier": {"$ref": "#/components/schemas/Supplier"}, "grid_connection": {"$ref": "#/components/schemas/GridConnection"}, "tariff": {"$ref": "#/components/schemas/Tariff"}}}, "LoadProfile": {"title": "LoadProfile", "required": ["last_updated", "updated_by", "created_at", "pool_id", "timepoints", "value_mwh"], "type": "object", "properties": {"last_updated": {"title": "Last Updated", "type": "string", "format": "date-time"}, "updated_by": {"title": "Updated By", "type": "integer"}, "created_at": {"title": "Created At", "type": "string", "format": "date-time"}, "pool_id": {"title": "Pool Id", "type": "integer"}, "timepoints": {"title": "Timepoints", "type": "array", "items": {"type": "string", "format": "date-time"}}, "value_mwh": {"title": "Value Mwh", "type": "array", "items": {"type": "number"}}}, "example": {"pool_id": 1921, "timepoints": ["2023-02-11T04:00:00", "2023-02-11T04:30:00", "2023-02-11T05:00:00", "2023-02-11T05:30:00", "2023-02-11T06:00:00", "2023-02-11T06:30:00", "2023-02-11T07:00:00", "2023-02-11T07:30:00", "2023-02-11T08:00:00", "2023-02-11T08:30:00", "2023-02-11T09:00:00", "2023-02-11T09:30:00", "2023-02-11T10:00:00", "2023-02-11T10:30:00", "2023-02-11T11:00:00", "2023-02-11T11:30:00", "2023-02-11T12:00:00", "2023-02-11T12:30:00", "2023-02-11T13:00:00", "2023-02-11T13:30:00", "2023-02-11T14:00:00", "2023-02-11T14:30:00", "2023-02-11T15:00:00", "2023-02-11T15:30:00"], "values": [1225, 1075, 1217, 128, 1317, 1133, 473, 850, 714, 565, 1285, 1577, 1299, 1237, 1603, 1483, 453, 1275, 832, 1052, 1568, 606, 1478, 789]}}, "Market": {"title": "Market", "required": ["last_updated", "updated_by", "created_at", "id", "name", "type", "zone", "min_mw", "allow_pool", "frequency"], "type": "object", "properties": {"last_updated": {"title": "Last Updated", "type": "string", "format": "date-time"}, "updated_by": {"title": "Updated By", "type": "integer"}, "created_at": {"title": "Created At", "type": "string", "format": "date-time"}, "id": {"title": "Id", "type": "integer"}, "name": {"title": "Name", "type": "string"}, "type": {"$ref": "#/components/schemas/MarketTypes"}, "zone": {"$ref": "#/components/schemas/BiddingZone"}, "min_mw": {"title": "Min Mw", "type": "number"}, "min_response_time": {"title": "Min Response Time", "type": "number"}, "allow_pool": {"title": "Allow Pool", "type": "boolean"}, "frequency": {"$ref": "#/components/schemas/Frequency"}}, "example": {"id": 121, "name": "GB Day Ahead", "type": "{'name': 'Day Ahead', 'category': <MarketCategory.wholesale: 'Wholesale'>}", "zone": {"name": "UK", "geography": "UK"}, "min_mw": 0, "allow_pool": true, "frequency": "30m"}}, "MarketTypes": {"title": "MarketTypes", "enum": ["{'name': 'Day Ahead', 'category': <MarketCategory.wholesale: 'Wholesale'>}", "{'name': 'Distribution', 'category': <MarketCategory.network: 'Network Charges'>}", "{'name': 'Balancing Mechanism', 'category': <MarketCategory.balancing: 'Balancing'>}", "{'name': 'FFR', 'category': <MarketCategory.balancing: 'Balancing'>}", "{'name': 'FCR', 'category': <MarketCategory.balancing: 'Balancing'>}", "{'name': 'FCR-D', 'category': <MarketCategory.balancing: 'Balancing'>}", "{'name': 'FCR-N', 'category': <MarketCategory.balancing: 'Balancing'>}", "{'name': 'aFRR', 'category': <MarketCategory.balancing: 'Balancing'>}", "{'name': 'mFRR', 'category': <MarketCategory.balancing: 'Balancing'>}", "{'name': 'RR', 'category': <MarketCategory.balancing: 'Balancing'>}", "{'name': 'DFS', 'category': <MarketCategory.demand_response: 'Demand Response'>}", "{'name': 'NEBEF', 'category': <MarketCategory.demand_response: 'Demand Response'>}", "{'name': 'Pilot', 'category': <MarketCategory.local_network_flex: 'Local Network Flex'>}", "{'name': 'Scale', 'category': <MarketCategory.local_network_flex: 'Local Network Flex'>}"], "type": "string", "description": "An enumeration."}, "OptimizationPlan": {"title": "OptimizationPlan", "required": ["last_updated", "updated_by", "created_at", "start_time", "end_time", "pool_id", "execution_plans", "balancing_strategy", "load_profile"], "type": "object", "properties": {"last_updated": {"title": "Last Updated", "type": "string", "format": "date-time"}, "updated_by": {"title": "Updated By", "type": "integer"}, "created_at": {"title": "Created At", "type": "string", "format": "date-time"}, "start_time": {"title": "Start Time", "type": "string", "format": "date-time"}, "end_time": {"title": "End Time", "type": "string", "format": "date-time"}, "pool_id": {"title": "Pool Id", "type": "integer"}, "execution_plans": {"title": "Execution Plans", "type": "array", "items": {"$ref": "#/components/schemas/ExecutionPlan"}}, "balancing_strategy": {"title": "Balancing Strategy", "type": "array", "items": {"$ref": "#/components/schemas/BalancingPlans"}}, "load_profile": {"$ref": "#/components/schemas/LoadProfile"}, "accepted": {"title": "Accepted", "type": "boolean", "default": false}}, "description": "Combines a set of execution instructions for assets,\na set of bid/offers in relevant markets, and a load profile\nfor the wholesale markets"}, "Pool": {"title": "Pool", "required": ["last_updated", "updated_by", "created_at", "zone", "households", "markets", "id"], "type": "object", "properties": {"last_updated": {"title": "Last Updated", "type": "string", "format": "date-time"}, "updated_by": {"title": "Updated By", "type": "integer"}, "created_at": {"title": "Created At", "type": "string", "format": "date-time"}, "zone": {"$ref": "#/components/schemas/BiddingZones"}, "households": {"title": "Households", "type": "array", "items": {"$ref": "#/components/schemas/Household"}}, "markets": {"title": "Markets", "type": "array", "items": {"$ref": "#/components/schemas/Market"}}, "id": {"title": "Id", "type": "integer"}}}, "PoolRequest": {"title": "PoolRequest", "required": ["last_updated", "updated_by", "created_at", "zone", "households", "markets"], "type": "object", "properties": {"last_updated": {"title": "Last Updated", "type": "string", "format": "date-time"}, "updated_by": {"title": "Updated By", "type": "integer"}, "created_at": {"title": "Created At", "type": "string", "format": "date-time"}, "zone": {"$ref": "#/components/schemas/BiddingZones"}, "households": {"title": "Households", "type": "array", "items": {"$ref": "#/components/schemas/Household"}}, "markets": {"title": "Markets", "type": "array", "items": {"$ref": "#/components/schemas/Market"}}}}, "Supplier": {"title": "Supplier", "required": ["name"], "type": "object", "properties": {"name": {"title": "Name", "type": "string"}}}, "Tariff": {"title": "Tariff", "required": ["prices_per_minute"], "type": "object", "properties": {"prices_per_minute": {"title": "Prices Per Minute", "type": "object"}}}, "ValidationError": {"title": "ValidationError", "required": ["loc", "msg", "type"], "type": "object", "properties": {"loc": {"title": "Location", "type": "array", "items": {"anyOf": [{"type": "string"}, {"type": "integer"}]}}, "msg": {"title": "Message", "type": "string"}, "type": {"title": "Error Type", "type": "string"}}}}, "securitySchemes": {"OAuth2PasswordBearer": {"type": "oauth2", "flows": {"password": {"scopes": {}, "tokenUrl": "token"}}}}}}
+{
+    "openapi": "3.0.2",
+    "servers": [
+        {
+            "url": "http://localhost:3001"
+        }
+    ],
+    "info": {
+        "title": "axle optimizer",
+        "description": "<h3>Module for optimization of assets, households, and pools across markets.</h3> <h2> Authentication </h2><p>Authentication is via Oauth2, please contact [support@axle.energy](mailto:support@axle.energy) for credentials. credentials. </p><h2> Core concepts </h2><ul style='font-size: 10px'><li>The core unit of functionality is a **Pool** to be be optimized.</li> <li>Each Pool is associated with a single **PriceZone**, and can be optimized as a block.</li><li>Each pool contains a number of **assets**, associated with a set of **households**. Each **household** is associated with a specific **GridConnection**. </li></ul><h2> Typical usage </h2><ul><li> Register a new pool and associated households and assets via the *entities* endpoints<li> Retrieve optimized profiles for the pool and associated assets via the *optimize* endpoints<li> New requests to the *optimize* endpoints prompt a re-optimization, allowing plans to be refreshedon multiple timescales and participation in baseload, day ahead, and intraday markets<li> Accept/reject a plan for a Pool to trigger physical execution of the plan and update operational schedulesfor the Assets in that Pool</ul><h2>Markets</h2><p> The optimizer is integrated with a wide range of markets across Europe. See the **MarketTypes** schema for more details. We cover:<ul><li> Wholesale markets (e.g. day ahead, intraday)<li> Transmission and Distribution markets (e.g. TNUOS, DUOS)<li> Balancing Services (e.g. FCR-D, aFRR)<li> Demand Response schemes (e.g. DFS, NEBEF)<li> Local network flexibility (e.g. Pilot, Scale)</ul><h3> Webhooks </h3><p> We can configure webhooks which we call when a new Plan becomes available for a Pool. Please get in touch at [support@axle.energy](mailto:support@axle.energy) to configure your webhooks.</p>",
+        "version": "1.4.6"
+    },
+    "paths": {
+        "/entities/asset": {
+            "post": {
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Add Asset",
+                "description": "Register a new asset with flexible load",
+                "operationId": "add_asset_entities_asset_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Asset"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Update Asset",
+                "description": "Update an existing asset",
+                "operationId": "update_asset_entities_asset_patch",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Asset"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Asset"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/entities/asset/{asset_id}": {
+            "get": {
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Get Asset",
+                "description": "Retrieve an existing asset",
+                "operationId": "get_asset_entities_asset__asset_id__get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Asset Id",
+                            "type": "integer"
+                        },
+                        "name": "asset_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Asset"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/entities/household": {
+            "post": {
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Add Household",
+                "description": "Register a new household with flexible load",
+                "operationId": "add_household_entities_household_post",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Update Household",
+                "description": "Update an existing asset",
+                "operationId": "update_household_entities_household_patch",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Household"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Household"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/entities/household/{household_id}": {
+            "get": {
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Get Household",
+                "description": "Get details for a particular household",
+                "operationId": "get_household_entities_household__household_id__get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Household Id",
+                            "type": "integer"
+                        },
+                        "name": "household_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Household"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/entities/pool": {
+            "post": {
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Add Pool",
+                "description": "Register a new pool to which households and assets can be associated",
+                "operationId": "add_pool_entities_pool_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PoolRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pool"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/entities/pool/{pool_id}": {
+            "get": {
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Get Pool",
+                "description": "Retrieve specified pool and associated household IDs",
+                "operationId": "get_pool_entities_pool__pool_id__get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Pool Id",
+                            "type": "integer"
+                        },
+                        "name": "pool_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pool"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/entities/pool/{pool_id}/add/{household_id}": {
+            "post": {
+                "tags": [
+                    "entities"
+                ],
+                "summary": "Add Household To Pool",
+                "description": "Register a new pool to which households and assets can be associated",
+                "operationId": "add_household_to_pool_entities_pool__pool_id__add__household_id__post",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Pool Id",
+                            "type": "integer"
+                        },
+                        "name": "pool_id",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Household Id",
+                            "type": "integer"
+                        },
+                        "name": "household_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/optimize/pool/{pool_id}": {
+            "get": {
+                "tags": [
+                    "optimize"
+                ],
+                "summary": "Get Latest Optimized Plan For Pool",
+                "operationId": "get_latest_optimized_plan_for_pool_optimize_pool__pool_id__get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Start Time",
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "End Time",
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "name": "end_time",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OptimizationPlan"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/optimize/household/{household_id}": {
+            "get": {
+                "tags": [
+                    "optimize"
+                ],
+                "summary": "Get Latest Optimized Plan For Household",
+                "description": "Retrieve the optimization plan of which a household is a part",
+                "operationId": "get_latest_optimized_plan_for_household_optimize_household__household_id__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OptimizationPlan"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/optimize/asset/{asset}": {
+            "get": {
+                "tags": [
+                    "optimize"
+                ],
+                "summary": "Get Latest Optimized Plan For Asset",
+                "description": "Retrieve the optimization plan of which an asset is a part",
+                "operationId": "get_latest_optimized_plan_for_asset_optimize_asset__asset__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/optimize/pool/accept/{pool_id}": {
+            "post": {
+                "tags": [
+                    "optimize"
+                ],
+                "summary": "Accept Plan For Pool",
+                "description": "Accept a proposed plan",
+                "operationId": "accept_plan_for_pool_optimize_pool_accept__pool_id__post",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Pool Id"
+                        },
+                        "name": "pool_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        },
+        "/optimize/pool/reject/{pool_id}": {
+            "post": {
+                "tags": [
+                    "optimize"
+                ],
+                "summary": "Reject Plan For Pool",
+                "description": "Reject a proposed plan",
+                "operationId": "reject_plan_for_pool_optimize_pool_reject__pool_id__post",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Pool Id"
+                        },
+                        "name": "pool_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Asset": {
+                "title": "Asset",
+                "required": [
+                    "type",
+                    "household_id",
+                    "max_import_kw",
+                    "max_export_kw",
+                    "connection",
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "$ref": "#/components/schemas/AssetType"
+                    },
+                    "household_id": {
+                        "title": "Household Id",
+                        "type": "integer"
+                    },
+                    "max_import_kw": {
+                        "title": "Max Import Kw",
+                        "type": "number"
+                    },
+                    "max_export_kw": {
+                        "title": "Max Export Kw",
+                        "type": "number"
+                    },
+                    "connection": {
+                        "$ref": "#/components/schemas/AssetConnection"
+                    },
+                    "id": {
+                        "title": "Id",
+                        "type": "integer"
+                    }
+                }
+            },
+            "AssetConnection": {
+                "title": "AssetConnection",
+                "required": [
+                    "last_updated",
+                    "updated_by",
+                    "created_at",
+                    "authentication_url",
+                    "token_expiry",
+                    "username",
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "last_updated": {
+                        "title": "Last Updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_by": {
+                        "title": "Updated By",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "authentication_url": {
+                        "title": "Authentication Url",
+                        "type": "string"
+                    },
+                    "token_expiry": {
+                        "title": "Token Expiry",
+                        "type": "number"
+                    },
+                    "username": {
+                        "title": "Username",
+                        "type": "string"
+                    },
+                    "password": {
+                        "title": "Password",
+                        "type": "string"
+                    }
+                }
+            },
+            "AssetType": {
+                "title": "AssetType",
+                "enum": [
+                    "Vehicle",
+                    "Charger",
+                    "HVAC",
+                    "Solar Inverter",
+                    "Storage"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "BalancingPlans": {
+                "title": "BalancingPlans",
+                "required": [
+                    "last_updated",
+                    "updated_by",
+                    "created_at",
+                    "bid_offer_plans",
+                    "market_id"
+                ],
+                "type": "object",
+                "properties": {
+                    "last_updated": {
+                        "title": "Last Updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_by": {
+                        "title": "Updated By",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "bid_offer_plans": {
+                        "title": "Bid Offer Plans",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BidOffer"
+                        }
+                    },
+                    "market_id": {
+                        "title": "Market Id",
+                        "type": "integer"
+                    }
+                },
+                "description": "Description of bids and offers to be communicated to the\nbalancing markets",
+                "example": {
+                    "market_id": 22,
+                    "bid_offer_plans": [
+                        {
+                            "last_updated": "2023-03-10T10:23:59.702517",
+                            "updated_by": 3,
+                            "created_at": "2023-03-10T10:23:59.702520",
+                            "from_level_mw": 3.0,
+                            "to_level_mw": 3.2,
+                            "price_eur": 211.2,
+                            "from_time": "2023-02-19T10:00:00",
+                            "to_time": "2023-02-19T10:15:00",
+                            "submitted": false
+                        },
+                        {
+                            "last_updated": "2023-03-10T10:23:59.702555",
+                            "updated_by": 3,
+                            "created_at": "2023-03-10T10:23:59.702555",
+                            "from_level_mw": 4.0,
+                            "to_level_mw": 0.0,
+                            "price_eur": 211.2,
+                            "from_time": "2023-02-19T10:15:00",
+                            "to_time": "2023-02-19T11:15:00",
+                            "submitted": false
+                        },
+                        {
+                            "last_updated": "2023-03-10T10:23:59.702573",
+                            "updated_by": 3,
+                            "created_at": "2023-03-10T10:23:59.702574",
+                            "from_level_mw": 3.0,
+                            "to_level_mw": 3.2,
+                            "price_eur": 999.0,
+                            "from_time": "2023-02-19T14:00:00",
+                            "to_time": "2023-02-19T18:15:00",
+                            "submitted": false
+                        }
+                    ]
+                }
+            },
+            "BidOffer": {
+                "title": "BidOffer",
+                "required": [
+                    "last_updated",
+                    "updated_by",
+                    "created_at",
+                    "from_level_mw",
+                    "to_level_mw",
+                    "price_eur",
+                    "from_time",
+                    "to_time"
+                ],
+                "type": "object",
+                "properties": {
+                    "last_updated": {
+                        "title": "Last Updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_by": {
+                        "title": "Updated By",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "from_level_mw": {
+                        "title": "From Level Mw",
+                        "type": "number"
+                    },
+                    "to_level_mw": {
+                        "title": "To Level Mw",
+                        "type": "number"
+                    },
+                    "price_eur": {
+                        "title": "Price Eur",
+                        "type": "number"
+                    },
+                    "from_time": {
+                        "title": "From Time",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "to_time": {
+                        "title": "To Time",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "submitted": {
+                        "title": "Submitted",
+                        "type": "boolean",
+                        "default": false
+                    }
+                },
+                "example": {
+                    "from_level_mw": 12.1,
+                    "to_level_mw": 11.6,
+                    "price_eur": 192.4,
+                    "from_time": "2023-02-19T10:00:00",
+                    "to_time": "2023-02-19T10:15:00"
+                }
+            },
+            "BiddingZone": {
+                "title": "BiddingZone",
+                "required": [
+                    "name",
+                    "geography"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "geography": {
+                        "$ref": "#/components/schemas/Geography"
+                    }
+                },
+                "example": {
+                    "id": 121,
+                    "name": "GB Day Ahead",
+                    "type": "{'name': 'Day Ahead', 'category': <MarketCategory.wholesale: 'Wholesale'>}",
+                    "zone": {
+                        "name": "UK",
+                        "geography": "UK"
+                    },
+                    "min_mw": 0,
+                    "allow_pool": true,
+                    "frequency": "30m"
+                }
+            },
+            "BiddingZones": {
+                "title": "BiddingZones",
+                "enum": [
+                    [
+                        {
+                            "name": "SE1",
+                            "geography": "SE"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "SE2",
+                            "geography": "SE"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "SE3",
+                            "geography": "SE"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "SE4",
+                            "geography": "SE"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "AT",
+                            "geography": "AT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "BE",
+                            "geography": "BE"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "BG",
+                            "geography": "BG"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "HR",
+                            "geography": "HR"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "CZ",
+                            "geography": "CZ"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "DE_LU",
+                            "geography": "DE"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "DK_1",
+                            "geography": "DK"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "DK_2",
+                            "geography": "DK"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "EE",
+                            "geography": "EE"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "FI",
+                            "geography": "FI"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "FR",
+                            "geography": "FR"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "GR",
+                            "geography": "GR"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "HU",
+                            "geography": "HU"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "IE_SEM",
+                            "geography": "IE"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "IT_SACO_AC",
+                            "geography": "IT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "IT_CALA",
+                            "geography": "IT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "IT_SACO_DC",
+                            "geography": "IT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "IT_CNOR",
+                            "geography": "IT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "IT_CSUD",
+                            "geography": "IT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "IT_NORD",
+                            "geography": "IT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "IT_SARD",
+                            "geography": "IT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "IT_SICI",
+                            "geography": "IT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "IT_SUD",
+                            "geography": "IT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "LV",
+                            "geography": "LV"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "NL",
+                            "geography": "NL"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "NO_1",
+                            "geography": "NO"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "NO_2",
+                            "geography": "NO"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "NO_2_NSL",
+                            "geography": "NO"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "NO_3",
+                            "geography": "NO"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "NO_4",
+                            "geography": "NO"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "NO_5",
+                            "geography": "NO"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "PL",
+                            "geography": "PL"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "PT",
+                            "geography": "PT"
+                        }
+                    ],
+                    [
+                        {
+                            "name": "UK",
+                            "geography": "UK"
+                        }
+                    ]
+                ],
+                "type": "array",
+                "items": {},
+                "description": "An enumeration."
+            },
+            "Command": {
+                "title": "Command",
+                "required": [
+                    "on",
+                    "level",
+                    "state"
+                ],
+                "type": "object",
+                "properties": {
+                    "on": {
+                        "title": "On",
+                        "type": "boolean"
+                    },
+                    "level": {
+                        "title": "Level",
+                        "type": "number"
+                    },
+                    "state": {
+                        "$ref": "#/components/schemas/CommandState"
+                    }
+                },
+                "example": {
+                    "asset_id": 901291,
+                    "timepoints": [
+                        "2023-02-11T04:00:00",
+                        "2023-02-11T04:30:00",
+                        "2023-02-11T05:00:00",
+                        "2023-02-11T05:30:00",
+                        "2023-02-11T06:00:00",
+                        "2023-02-11T06:30:00",
+                        "2023-02-11T07:00:00",
+                        "2023-02-11T07:30:00",
+                        "2023-02-11T08:00:00",
+                        "2023-02-11T08:30:00",
+                        "2023-02-11T09:00:00",
+                        "2023-02-11T09:30:00",
+                        "2023-02-11T10:00:00",
+                        "2023-02-11T10:30:00",
+                        "2023-02-11T11:00:00",
+                        "2023-02-11T11:30:00",
+                        "2023-02-11T12:00:00",
+                        "2023-02-11T12:30:00",
+                        "2023-02-11T13:00:00",
+                        "2023-02-11T13:30:00",
+                        "2023-02-11T14:00:00",
+                        "2023-02-11T14:30:00",
+                        "2023-02-11T15:00:00",
+                        "2023-02-11T15:30:00"
+                    ],
+                    "commands": [
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        }
+                    ]
+                }
+            },
+            "CommandState": {
+                "title": "CommandState",
+                "enum": [
+                    "SENT",
+                    "PENDING",
+                    "CONFIRMED"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "ExecutionPlan": {
+                "title": "ExecutionPlan",
+                "required": [
+                    "last_updated",
+                    "updated_by",
+                    "created_at",
+                    "asset_id",
+                    "timepoints",
+                    "commands"
+                ],
+                "type": "object",
+                "properties": {
+                    "last_updated": {
+                        "title": "Last Updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_by": {
+                        "title": "Updated By",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "asset_id": {
+                        "title": "Asset Id",
+                        "type": "integer"
+                    },
+                    "timepoints": {
+                        "title": "Timepoints",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    "commands": {
+                        "title": "Commands",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Command"
+                        }
+                    }
+                },
+                "example": {
+                    "asset_id": 901291,
+                    "timepoints": [
+                        "2023-02-11T04:00:00",
+                        "2023-02-11T04:30:00",
+                        "2023-02-11T05:00:00",
+                        "2023-02-11T05:30:00",
+                        "2023-02-11T06:00:00",
+                        "2023-02-11T06:30:00",
+                        "2023-02-11T07:00:00",
+                        "2023-02-11T07:30:00",
+                        "2023-02-11T08:00:00",
+                        "2023-02-11T08:30:00",
+                        "2023-02-11T09:00:00",
+                        "2023-02-11T09:30:00",
+                        "2023-02-11T10:00:00",
+                        "2023-02-11T10:30:00",
+                        "2023-02-11T11:00:00",
+                        "2023-02-11T11:30:00",
+                        "2023-02-11T12:00:00",
+                        "2023-02-11T12:30:00",
+                        "2023-02-11T13:00:00",
+                        "2023-02-11T13:30:00",
+                        "2023-02-11T14:00:00",
+                        "2023-02-11T14:30:00",
+                        "2023-02-11T15:00:00",
+                        "2023-02-11T15:30:00"
+                    ],
+                    "commands": [
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 11.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": true,
+                            "level": 9.2,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        },
+                        {
+                            "on": false,
+                            "level": 0,
+                            "state": "SENT"
+                        }
+                    ]
+                }
+            },
+            "Frequency": {
+                "title": "Frequency",
+                "enum": [
+                    "Annual",
+                    "Daily",
+                    "30m",
+                    "1m"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "Geography": {
+                "title": "Geography",
+                "enum": [
+                    "DE",
+                    "UK",
+                    "NL",
+                    "FR",
+                    "SE",
+                    "DK",
+                    "IE",
+                    "NO",
+                    "IT",
+                    "FI",
+                    "BE",
+                    "AT",
+                    "BG",
+                    "HU",
+                    "HR",
+                    "CZ",
+                    "EE",
+                    "GR",
+                    "LV",
+                    "PT",
+                    "PL"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "GridConnection": {
+                "title": "GridConnection",
+                "required": [
+                    "max_import_kw",
+                    "max_export_kw"
+                ],
+                "type": "object",
+                "properties": {
+                    "max_import_kw": {
+                        "title": "Max Import Kw",
+                        "type": "number"
+                    },
+                    "max_export_kw": {
+                        "title": "Max Export Kw",
+                        "type": "number"
+                    }
+                }
+            },
+            "GridSupplyPoint": {
+                "title": "GridSupplyPoint",
+                "required": [
+                    "name",
+                    "geography"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "geography": {
+                        "$ref": "#/components/schemas/Geography"
+                    }
+                }
+            },
+            "HTTPValidationError": {
+                "title": "HTTPValidationError",
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        }
+                    }
+                }
+            },
+            "Household": {
+                "title": "Household",
+                "required": [
+                    "last_updated",
+                    "updated_by",
+                    "created_at",
+                    "id",
+                    "account",
+                    "price_zone",
+                    "grid_supply_point",
+                    "supplier",
+                    "grid_connection",
+                    "tariff"
+                ],
+                "type": "object",
+                "properties": {
+                    "last_updated": {
+                        "title": "Last Updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_by": {
+                        "title": "Updated By",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "id": {
+                        "title": "Id",
+                        "type": "integer"
+                    },
+                    "account": {
+                        "title": "Account",
+                        "type": "string"
+                    },
+                    "price_zone": {
+                        "$ref": "#/components/schemas/BiddingZones"
+                    },
+                    "grid_supply_point": {
+                        "$ref": "#/components/schemas/GridSupplyPoint"
+                    },
+                    "supplier": {
+                        "$ref": "#/components/schemas/Supplier"
+                    },
+                    "grid_connection": {
+                        "$ref": "#/components/schemas/GridConnection"
+                    },
+                    "tariff": {
+                        "$ref": "#/components/schemas/Tariff"
+                    }
+                }
+            },
+            "LoadProfile": {
+                "title": "LoadProfile",
+                "required": [
+                    "last_updated",
+                    "updated_by",
+                    "created_at",
+                    "pool_id",
+                    "timepoints",
+                    "value_mwh"
+                ],
+                "type": "object",
+                "properties": {
+                    "last_updated": {
+                        "title": "Last Updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_by": {
+                        "title": "Updated By",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "pool_id": {
+                        "title": "Pool Id",
+                        "type": "integer"
+                    },
+                    "timepoints": {
+                        "title": "Timepoints",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    "value_mwh": {
+                        "title": "Value Mwh",
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "example": {
+                    "pool_id": 1921,
+                    "timepoints": [
+                        "2023-02-11T04:00:00",
+                        "2023-02-11T04:30:00",
+                        "2023-02-11T05:00:00",
+                        "2023-02-11T05:30:00",
+                        "2023-02-11T06:00:00",
+                        "2023-02-11T06:30:00",
+                        "2023-02-11T07:00:00",
+                        "2023-02-11T07:30:00",
+                        "2023-02-11T08:00:00",
+                        "2023-02-11T08:30:00",
+                        "2023-02-11T09:00:00",
+                        "2023-02-11T09:30:00",
+                        "2023-02-11T10:00:00",
+                        "2023-02-11T10:30:00",
+                        "2023-02-11T11:00:00",
+                        "2023-02-11T11:30:00",
+                        "2023-02-11T12:00:00",
+                        "2023-02-11T12:30:00",
+                        "2023-02-11T13:00:00",
+                        "2023-02-11T13:30:00",
+                        "2023-02-11T14:00:00",
+                        "2023-02-11T14:30:00",
+                        "2023-02-11T15:00:00",
+                        "2023-02-11T15:30:00"
+                    ],
+                    "values": [
+                        1225,
+                        1075,
+                        1217,
+                        128,
+                        1317,
+                        1133,
+                        473,
+                        850,
+                        714,
+                        565,
+                        1285,
+                        1577,
+                        1299,
+                        1237,
+                        1603,
+                        1483,
+                        453,
+                        1275,
+                        832,
+                        1052,
+                        1568,
+                        606,
+                        1478,
+                        789
+                    ]
+                }
+            },
+            "Market": {
+                "title": "Market",
+                "required": [
+                    "last_updated",
+                    "updated_by",
+                    "created_at",
+                    "id",
+                    "name",
+                    "type",
+                    "zone",
+                    "min_mw",
+                    "allow_pool",
+                    "frequency"
+                ],
+                "type": "object",
+                "properties": {
+                    "last_updated": {
+                        "title": "Last Updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_by": {
+                        "title": "Updated By",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "id": {
+                        "title": "Id",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/MarketTypes"
+                    },
+                    "zone": {
+                        "$ref": "#/components/schemas/BiddingZone"
+                    },
+                    "min_mw": {
+                        "title": "Min Mw",
+                        "type": "number"
+                    },
+                    "min_response_time": {
+                        "title": "Min Response Time",
+                        "type": "number"
+                    },
+                    "allow_pool": {
+                        "title": "Allow Pool",
+                        "type": "boolean"
+                    },
+                    "frequency": {
+                        "$ref": "#/components/schemas/Frequency"
+                    }
+                },
+                "example": {
+                    "id": 121,
+                    "name": "GB Day Ahead",
+                    "type": "{'name': 'Day Ahead', 'category': <MarketCategory.wholesale: 'Wholesale'>}",
+                    "zone": {
+                        "name": "UK",
+                        "geography": "UK"
+                    },
+                    "min_mw": 0,
+                    "allow_pool": true,
+                    "frequency": "30m"
+                }
+            },
+            "MarketTypes": {
+                "title": "MarketTypes",
+                "enum": [
+                    "{'name': 'Day Ahead', 'category': <MarketCategory.wholesale: 'Wholesale'>}",
+                    "{'name': 'Distribution', 'category': <MarketCategory.network: 'Network Charges'>}",
+                    "{'name': 'Balancing Mechanism', 'category': <MarketCategory.balancing: 'Balancing'>}",
+                    "{'name': 'FFR', 'category': <MarketCategory.balancing: 'Balancing'>}",
+                    "{'name': 'FCR', 'category': <MarketCategory.balancing: 'Balancing'>}",
+                    "{'name': 'FCR-D', 'category': <MarketCategory.balancing: 'Balancing'>}",
+                    "{'name': 'FCR-N', 'category': <MarketCategory.balancing: 'Balancing'>}",
+                    "{'name': 'aFRR', 'category': <MarketCategory.balancing: 'Balancing'>}",
+                    "{'name': 'mFRR', 'category': <MarketCategory.balancing: 'Balancing'>}",
+                    "{'name': 'RR', 'category': <MarketCategory.balancing: 'Balancing'>}",
+                    "{'name': 'DFS', 'category': <MarketCategory.demand_response: 'Demand Response'>}",
+                    "{'name': 'NEBEF', 'category': <MarketCategory.demand_response: 'Demand Response'>}",
+                    "{'name': 'Pilot', 'category': <MarketCategory.local_network_flex: 'Local Network Flex'>}",
+                    "{'name': 'Scale', 'category': <MarketCategory.local_network_flex: 'Local Network Flex'>}"
+                ],
+                "type": "string",
+                "description": "An enumeration."
+            },
+            "OptimizationPlan": {
+                "title": "OptimizationPlan",
+                "required": [
+                    "last_updated",
+                    "updated_by",
+                    "created_at",
+                    "start_time",
+                    "end_time",
+                    "pool_id",
+                    "execution_plans",
+                    "balancing_strategy",
+                    "load_profile"
+                ],
+                "type": "object",
+                "properties": {
+                    "last_updated": {
+                        "title": "Last Updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_by": {
+                        "title": "Updated By",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "start_time": {
+                        "title": "Start Time",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "end_time": {
+                        "title": "End Time",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "pool_id": {
+                        "title": "Pool Id",
+                        "type": "integer"
+                    },
+                    "execution_plans": {
+                        "title": "Execution Plans",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExecutionPlan"
+                        }
+                    },
+                    "balancing_strategy": {
+                        "title": "Balancing Strategy",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BalancingPlans"
+                        }
+                    },
+                    "load_profile": {
+                        "$ref": "#/components/schemas/LoadProfile"
+                    },
+                    "accepted": {
+                        "title": "Accepted",
+                        "type": "boolean",
+                        "default": false
+                    }
+                },
+                "description": "Combines a set of execution instructions for assets,\na set of bid/offers in relevant markets, and a load profile\nfor the wholesale markets"
+            },
+            "Pool": {
+                "title": "Pool",
+                "required": [
+                    "last_updated",
+                    "updated_by",
+                    "created_at",
+                    "zone",
+                    "households",
+                    "markets",
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "last_updated": {
+                        "title": "Last Updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_by": {
+                        "title": "Updated By",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "zone": {
+                        "$ref": "#/components/schemas/BiddingZones"
+                    },
+                    "households": {
+                        "title": "Households",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Household"
+                        }
+                    },
+                    "markets": {
+                        "title": "Markets",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Market"
+                        }
+                    },
+                    "id": {
+                        "title": "Id",
+                        "type": "integer"
+                    }
+                }
+            },
+            "PoolRequest": {
+                "title": "PoolRequest",
+                "required": [
+                    "last_updated",
+                    "updated_by",
+                    "created_at",
+                    "zone",
+                    "households",
+                    "markets"
+                ],
+                "type": "object",
+                "properties": {
+                    "last_updated": {
+                        "title": "Last Updated",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_by": {
+                        "title": "Updated By",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "zone": {
+                        "$ref": "#/components/schemas/BiddingZones"
+                    },
+                    "households": {
+                        "title": "Households",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Household"
+                        }
+                    },
+                    "markets": {
+                        "title": "Markets",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Market"
+                        }
+                    }
+                }
+            },
+            "Supplier": {
+                "title": "Supplier",
+                "required": [
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    }
+                }
+            },
+            "Tariff": {
+                "title": "Tariff",
+                "required": [
+                    "prices_per_minute"
+                ],
+                "type": "object",
+                "properties": {
+                    "prices_per_minute": {
+                        "title": "Prices Per Minute",
+                        "type": "object"
+                    }
+                }
+            },
+            "ValidationError": {
+                "title": "ValidationError",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "loc": {
+                        "title": "Location",
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        }
+                    },
+                    "msg": {
+                        "title": "Message",
+                        "type": "string"
+                    },
+                    "type": {
+                        "title": "Error Type",
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "OAuth2PasswordBearer": {
+                "type": "oauth2",
+                "flows": {
+                    "password": {
+                        "scopes": {},
+                        "tokenUrl": "token"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,41 @@
+---
+title: "Core concepts"
+description: "Learn the building blocks of market flexibility"
+---
+
+# Entities
+## Market
+A market is a specific type of product (e.g. frequency response) within a specific geography (e.g. NL).
+
+Each market has a set of participation requirements and reimbursement schemes. Requirements are defined both at the **pool** and **asset** level.
+
+## Geography
+Markets sit within specific geographies. Different geographies may procure similar products (e.g. frequency response) under different names.
+
+## Pool
+A pool is a collection of **assets**, grouped together for the purpose of participating in a **market**. By pooling assets we meet 
+minimum size requirements, and gain the ability to make probabilistic forecasts of availability: even if one particular asset is unavailable, in a 
+large pool of assets we can place high-confidence bids on the availability of some fraction.
+
+## Assets
+An asset is a source of flexible load such as an electric vehicle, HVAC system, or battery.
+
+# Events
+## Grouping assets into pools
+Assets in the same **geography** and with similar response characteristics are added to **pools**. At present, an asset can only
+be registered to a single pool. When creating a pool, you can specify the eligibility requirements, allowing automated rejection of assets.
+
+For instance, in a particular geography, you might establish two pools of assets depending upon the speed with which they respond 
+to commands. 
+
+## Prequalifying pools
+Access to markets go via a **prequalification** step in the properties of the pool and constituent assets are verified against the requirements of 
+that market. Axle performs the prequalification on your behalf.
+
+## Registering pools
+Post prequalification, a pool is registered to participate in a particular market. This subscribes the pool to the conditions of that 
+market, and corresponding payments.
+
+
+
+

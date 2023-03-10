@@ -25,12 +25,12 @@
     {
       "name": "Markets",
       "icon": "globe",
-      "url": "markets"
+      "url": "http://localhost:3000/markets/markets"
     },
     {
       "name": "API Reference",
       "icon": "rectangle-terminal",
-      "url": "api-reference"
+      "url": "api-reference/authentication"
     }
   ],
   "navigation": [
@@ -38,13 +38,59 @@
       "group": "Home",
       "pages": [
         "introduction",
-        "features"
+        "concepts"
+      ]
+    },
+    {
+      "group": "Getting Started",
+      "pages": [
+        "tutorial/setup",
+        "tutorial/create-pool",
+        "tutorial/create-asset",
+        "tutorial/check-qual",
+        "tutorial/register",
+        "tutorial/review"
       ]
     },
     {
       "group": "API Documentation",
       "pages": [
-        "api-reference/authentication"
+        "api-reference/authentication",
+        {
+          "group": "Assets",
+          "pages": [
+            "api-reference/entities/asset/get",
+            "api-reference/entities/asset/post"
+          ]
+        },
+        {
+          "group": "Pools",
+          "pages": [
+            "api-reference/entities/asset/get",
+            "api-reference/entities/asset/post"
+          ]
+        },
+        {
+          "group": "Markets",
+          "pages": [
+            "api-reference/entities/asset/get",
+            "api-reference/entities/asset/post"
+          ]
+        },
+        {
+          "group": "Geographies",
+          "pages": [
+            "api-reference/entities/asset/get",
+            "api-reference/entities/asset/post"
+          ]
+        },
+        {
+          "group": "Optimization",
+          "pages": [
+            "api-reference/asset/get",
+            "api-reference/asset/post"
+          ]
+        }
       ]
     },
     {
