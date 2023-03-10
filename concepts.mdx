@@ -1,0 +1,42 @@
+---
+title: "Core concepts"
+description: "Learn the building blocks of market flexibility"
+---
+
+# Entities
+## Market
+A market is a specific type of product (e.g. frequency response) within a specific geography (e.g. NL).
+
+Each market has a set of participation requirements and reimbursement schemes. Requirements are defined both at the **pool** and **asset** level.
+
+We associate each market with a list of **eligible assets**. These are assets that could be **registered** to participate in the market, if so desired.
+
+## Geography
+Markets sit within specific geographies. Different geographies may procure similar products (e.g. frequency response) under different names.
+
+## Assets
+An asset is a source of flexible load such as an electric vehicle, HVAC system, or battery. When you register an asset you need to supply 
+a webhook that we can call if the asset is called upon by the market.
+
+# Events
+## Reviewing eligible assets
+All eligible assets for a particular market are added to a "virtual pool" for that market. If desired, they can then be registered to that market.
+
+This pool of eligible assets correspond to assets that meet the prequalification criteria for that market.
+
+## Assessing availability
+Distributed energy assets have unpredictable availability over time. axle forecasts the availability of each asset based upon the data 
+you provide, and combines them to a market-level availability forecast. Alternatively, if you have an availability forecast that you are 
+confident in, you can supply this.
+
+## Placing bids
+Based upon the availability forecast for each market, we compute the optimal bidding strategy for each assets taking into account *all* the 
+markets in which that asset participates. 
+
+## Activation
+If an asset is activated, we will call the supplied webhook in order to turn the asset up or down by the specified amount. We will then await 
+confirmation that the action has been taken. 
+
+
+
+

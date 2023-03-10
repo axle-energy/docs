@@ -1,0 +1,29 @@
+---
+title: "Setting up an environment"
+description: "Create a new sandbox environment"
+---
+
+# Authentication
+We use token-based authentication. To get a token for your session, see the [Authentication](./api-reference/authentication) page.
+
+This token must be included in subsequent requests as a bearer token:
+
+```bash
+'Authorization': 'Bearer <team_token>'
+```
+
+
+# Environments
+Axle provides **sandbox** environments for testing and development purposes. We'll be using
+one of these to get started.
+
+When you're ready to roll with a **production** environment, please [get in touch with the team](mailto:founders@axle.energy).
+
+
+## Creating a new sandbox
+The API credentials you received upon signing up can be used to create and delete an unlimited number of sandbox environments.
+
+Create a new sandbox via `POST` to the `/environments` endpoint.
+
+
+
