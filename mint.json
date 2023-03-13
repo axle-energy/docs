@@ -80,21 +80,15 @@
           ]
         },
         {
-          "group": "Optimization",
+          "group": "Flexibility Pools",
           "pages": [
-            "api-reference/asset/get",
-            "api-reference/asset/post"
+            "api-reference/entities/pool/add_asset",
+            "api-reference/entities/pool/get_available_flex",
+            "api-reference/entities/pool/get_bids",
+            "api-reference/entities/pool/get_optimal_bids",
+            "api-reference/entities/pool/post_bids"
           ]
         }
-      ]
-    },
-    {
-      "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/update",
-        "api-reference/endpoint/delete"
       ]
     },
     {
@@ -111,7 +105,7 @@
   },
   "api": {
     "auth": {
-      "method": "basic"
+      "method": "bearer"
     }
   }
 }
