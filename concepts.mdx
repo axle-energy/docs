@@ -4,6 +4,7 @@ description: "Learn the building blocks of market flexibility"
 ---
 
 # Entities
+![Conversion](/images/assigning-assets.png)
 ## Market
 A market is a specific type of product (e.g. frequency response) within a specific geography (e.g. NL).
 
@@ -19,12 +20,13 @@ An asset is a source of flexible load such as an electric vehicle, HVAC system, 
 a webhook that we can call if the asset is called upon by the market.
 
 # Events
-## Reviewing eligible assets
+![Conversion](/images/forecasting-flex.png)
+## Registering eligible assets
 All eligible assets for a particular market are added to a "virtual pool" for that market. If desired, they can then be registered to that market.
 
 This pool of eligible assets correspond to assets that meet the prequalification criteria for that market.
 
-## Assessing availability
+## Forecasting pool availability
 Distributed energy assets have unpredictable availability over time. axle forecasts the availability of each asset based upon the data 
 you provide, and combines them to a market-level availability forecast. Alternatively, if you have an availability forecast that you are 
 confident in, you can supply this.

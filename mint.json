@@ -66,33 +66,29 @@
         {
           "group": "Markets",
           "pages": [
-            "api-reference/entities/asset/get",
-            "api-reference/entities/asset/post"
+            "api-reference/entities/market/get",
+            "api-reference/entities/market/get_one",
+            "api-reference/entities/market/get_eligible_assets",
+            "api-reference/entities/market/get_registered_assets"
           ]
         },
         {
           "group": "Geographies",
           "pages": [
-            "api-reference/entities/asset/get",
-            "api-reference/entities/asset/post"
+            "api-reference/entities/geographies/list",
+            "api-reference/entities/geographies/get_one"
           ]
         },
         {
-          "group": "Optimization",
+          "group": "Flexibility Pools",
           "pages": [
-            "api-reference/asset/get",
-            "api-reference/asset/post"
+            "api-reference/entities/pool/add_asset",
+            "api-reference/entities/pool/get_available_flex",
+            "api-reference/entities/pool/get_bids",
+            "api-reference/entities/pool/get_optimal_bids",
+            "api-reference/entities/pool/post_bids"
           ]
         }
-      ]
-    },
-    {
-      "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/update",
-        "api-reference/endpoint/delete"
       ]
     },
     {
@@ -106,5 +102,10 @@
     "twitter": "https://twitter.com/archydeb",
     "github": "https://github.com/axle-energy",
     "linkedin": "https://www.linkedin.com/company/karlbach"
+  },
+  "api": {
+    "auth": {
+      "method": "bearer"
+    }
   }
 }

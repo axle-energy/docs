@@ -3,54 +3,62 @@ title: "Market Overview"
 description: "European flexibility markets we currently support"
 ---
 
+# UK
+
+The UK balancing and flexibility structure operates independently from the rest of Europe. Traditional frequency and balancing is mostly inaccessible to DSF, while alternative products are both accessible and potentially lucrative. 
+
+The TSO (NGESO) operates a centrally-dispatched Balancing Mechanism, technically accessible to all assets. However, dispatch frequently deviates from merit order in favour of large generating units, significantly limiting DSF upside. Frequency products are today dominated by the super-fast (\<0.1s) Dynamic suite (DC, DM, DR) which aren’t well-suited to DSF. Slower products (e.g., aFFR) are getting phased out. The UK also has a Capacity Mechanism, but long bidding windows (min of 1yr) limit DSF participation. These products are  accessible from non-suppliers, via the VLP (Virtual Lead Party) role, equivalent to a BSP.
+
+The UK has 3 products well-suited to DSF. The first is local network flex, managed by the 6 DSOs and traded on 2 common auction platforms. This product requires highly-local specificity (down to the LV-substation), but lenient rules on measurement (sub-boundary, or asset), lax penalties, and acceptance of non-supplier participation make this a favourite.
+
+Second is the newly-launched Demand Flexibility Service (DFS), the UK’s load shedding programme to manage winter peaks. The DFS is highly lucrative (guarantee of £2/kWh) but limited use (guarantee of only 12 hour-long ‘events’ per year) make this a make-or-miss product. The DFS also requires boundary metering, severely limiting the access & scalability of non-supplier offerings.
+
+Third is the UK’s highly time-based approach to network charges. Both the Transmission (TNUoS) and Distribution (DUoS) network charges follow a time-based approach, with Transmission currently assigning charges predominating based on consumption during the 3 hours of highest annual consumption. Note that this structured will be significantly relaxed in 2023. Distribution charges follow a ‘red-amber-green’ framework, with consumption during evening peaks (’amber’) charged at ~10x the rate of off-peak consumption. Network charge avoidance is only available from the Supplier role.
+
+### Product
+
+[UK product summary](https://www.notion.so/79d0521441c34f9483ac9f76dd1da418)
+
 # Netherlands
 
-### Summary
-
-The Dutch market is mostly aligned with the ENTSO-E standard balancing products. The BSP role enables participation in balancing products (minus wholesale and imbalance) for non-suppliers, and lenient pooling rules streamline DSF access. Fast response times for symmetrical requirements for frequency products remain a barrier. 
+The Dutch market is mostly aligned with the ENTSO-E standard balancing products. The BSP role enables participation in balancing products (minus wholesale and imbalance) for non-suppliers, and lenient pooling rules streamline DSF access. Fast response times and symmetrical requirements for frequency products remain a barrier. 
 
 Dutch balancing is mostly resolved passively, through imbalance pricing. The Dutch TSO (TenneT) publishes real-time imbalance prices, creating a market mechanism to resolve imbalance without calling upon balancing reserves. Imbalance prices are equivalent to the balancing energy price. DSF assets may monetize their flexibility on the imbalance market if controlled via the BRP. When balancing isn’t required, the price for balancing products is set at the midpoint of ‘Up’ and ‘Down’ bids. 
 
-| Product | DSF suitability | Pooling | Direction | Min bid (MW) | Initial Activation Time (s) | Full Activation Time (s) | Measurement granularity (s) | Payment |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| FCR | 3 | Yes | Symmetrical | 1 | 2 | 30 | 4 | Availability |
-| aFRR | 4 | Yes | Asymmetrical |  |  |  |  |  |
-| mFRR | 3 | Yes | Asymmetrical |  |  |  |  |  |
+### Products
 
-### FCR
-
-The Dutch FCR product is consistent with 
-
-### aFRR
-
-### mFRR
-
-# UK
-
-### Summary
-
-sada
-
-### DFS
-
-### DSO flex
-
-### BM
-
-### DUoS
+[NL summary](https://www.notion.so/d5a612b440724d9d96bc6da06e3b6d50)
 
 # France
 
-### Summary
+France has a mixed balancing market. FCR is procured via the common EU framework, but strict symmetricality requirements limit DSF participation. The aFRR market is currently suspended. mFRR and RR are not yet part of the common MARI platform, but do allow some DSF access via specified programmes.
 
-France has a mixed balancing market. FCR is procured via the common EU framework, enabling DSF access when the symmetricality requirement is met. The 
+France has a country-specific load-shedding product (NEBEF) well-suited to DSF. BSP participation is allowed. Under NEBEF, assets are paid to reduce their consumption compared to their day-ahead forecast. 
 
-[FR summary](https://www.notion.so/120c0d913d8c4de4bbf78c7c3ef62836)
+France also has time-based DSO charges, enabling further cost avoidance if in the BRP role.
 
-### FCR
+### Products
 
 The Dutch FCR product is consistent with 
 
-### aFRR
+[FR summary](https://www.notion.so/120c0d913d8c4de4bbf78c7c3ef62836)
 
-### mFRR
+# Germany
+
+The German balancing market participates in EU cooperation for FCR and aFRR products. The BSP role exists, but only BRPs are effectively able to participate. Pooling is allowed, within the same TSO area (4 TSOs in Germany). Burdensome prequalification and measurement requirements (including DSO approval) limit the scalability of DSF participation. 
+
+### Products
+
+[DE summary](https://www.notion.so/9f7e7bef1f91431bb6e9d72f40b29e67)
+
+# Denmark
+
+Denmark is split into 2 zones: DK1 (West) is closely aligned with EU balancing arrangements, and DK2 (East) is integrated into the common Nordic balancing zone.
+
+In DK2, the asymmetric FCR-D (Disturbance) product is particularly well-suited to DSF. FCR-D has small min bids (0.1MW), flexible bid durations (1 to 6 hours) and pooled measurement. Pools are capped at 3MW, adding a cost (metering) and administrative burden to large portfolios. FFR’s 1 second response time limits many DSF assets, but is otherwise accessible. 
+
+In DK1, BSP restrictions on pooling effectively limit the market. BRPs are able to participate in the FCR market, but have significant barriers in the restricted aFRR and mFRR markets.
+
+### Products
+
+[DE summary (1)](https://www.notion.so/6ebb8be1490a47b29991029c402b50e8)
