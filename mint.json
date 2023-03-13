@@ -66,15 +66,17 @@
         {
           "group": "Markets",
           "pages": [
-            "api-reference/entities/asset/get",
-            "api-reference/entities/asset/post"
+            "api-reference/entities/market/get",
+            "api-reference/entities/market/get_one",
+            "api-reference/entities/market/get_eligible_assets",
+            "api-reference/entities/market/get_registered_assets"
           ]
         },
         {
           "group": "Geographies",
           "pages": [
-            "api-reference/entities/asset/get",
-            "api-reference/entities/asset/post"
+            "api-reference/entities/geographies/list",
+            "api-reference/entities/geographies/get_one"
           ]
         },
         {
@@ -106,5 +108,10 @@
     "twitter": "https://twitter.com/archydeb",
     "github": "https://github.com/axle-energy",
     "linkedin": "https://www.linkedin.com/company/karlbach"
+  },
+  "api": {
+    "auth": {
+      "method": "basic"
+    }
   }
 }
